@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+/Debug/
+
+#From tool cmakegit.
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+*.swp
+valgrind.csv
