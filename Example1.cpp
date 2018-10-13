@@ -8,14 +8,14 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	std::vector<std::string> wordList = { "anand" , "anant", "deepti", "robert", "zebra" };
+	vector<string> wordList = { "anand", "anant", "deepti", "robert", "zebra" };
 	Trie sampleTrie;
 
-	for(const auto& word : wordList)
+	for (const auto& word : wordList)
 		sampleTrie.insertWord(word);
 
-	std::vector<std::string> invalidWordList = { "magic", "tickle", "trickster", "buggy" };
-	for(const auto& word : wordList )
+	vector<string> invalidWordList = { "magic", "tickle", "trickster", "buggy" };
+	for (const auto& word : wordList)
 	{
 		if(sampleTrie.isWord(word))
 			cout << "word = " << word << " is a valid Word as per Trie." << endl;
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 			cout << "word = " << word << " is an invalid Word as per Trie." << endl;
 	}
 
-	for(const auto& word : invalidWordList )
+	for (const auto& word : invalidWordList)
 	{
 		if(sampleTrie.isWord(word))
 			cout << "word = " << word << " is a valid Word as per Trie." << endl;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 			cout << "word = " << word << " is an invalid Word as per Trie." << endl;
 	}
 
-	const std::string testWord = "anand";
+	const string testWord = "anand";
 	bool isWordStatus = sampleTrie.isWord(testWord);
 	cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
 	pair<bool, size_t> deleteStatus = sampleTrie.deleteWord(testWord);
@@ -40,5 +40,5 @@ int main(int argc, char* argv[])
 		cout << "The number of TrieNodes deleted were = " << deleteStatus.second << endl;
 	isWordStatus = sampleTrie.isWord(testWord);
 	cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
-	return(0);
+	return (0);
 }
