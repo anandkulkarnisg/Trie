@@ -8,13 +8,14 @@
 #include<iostream>
 #include<string>
 #include<map>
+
 #include "Trie.h"
 
 using namespace std;
 
 Trie::Trie() : m_root(new TrieNode()) 
 {
-
+	++m_countAlloc;
 }
 
 void Trie::insertWord(const std::string& word) 
@@ -29,6 +30,7 @@ void Trie::insertWord(const std::string& word)
 		if (currNode->m_children.size() == 0) 
 		{
 			newNode = new TrieNode();
+			++m_countAlloc;
 			currNode->m_children[word[i]] = newNode;
 		} 
 		else 
@@ -37,6 +39,7 @@ void Trie::insertWord(const std::string& word)
 			if (iter == currNode->m_children.end()) 
 			{
 				newNode = new TrieNode();
+				++m_countAlloc;
 				currNode->m_children[word[i]] = newNode;
 			} 
 			else
@@ -99,4 +102,46 @@ bool Trie::recursiveDelete(TrieNode* current, const std::string& word, size_t& m
 		return (current->m_children.size() == 0);
 	}
 	return (false);
+}
+
+bool Trie::isEmpty()
+{
+	return(m_root->m_children.size()==0);
+}
+
+void Trie::deleteTrieNodeRecursive(TrieNode* node, size_t& counter)
+{
+	if(node->m_children.size()==0)
+	{
+		//cout << "deleting a vacant end point" << endl;
+		delete node;
+		++counter;
+	}
+	else
+	{
+		for(auto& iter : node->m_children)
+		{
+			deleteTrieNodeRecursive(iter.second, counter);
+			//cout << "deleting via character = " << iter.first << endl;
+			node->m_children.erase(iter.first);
+		}
+		if(node->m_children.size()==0)
+		{
+			//cout << "deleting a node after its map removals" << endl;
+			if(node == m_root)
+				//cout << "yes root is deleted" << endl;
+			delete node;
+			++counter;
+		}
+	}
+}
+
+Trie::~Trie()
+{
+	// We need to delete all the Trie Nodes here. This can be done recursively.
+	size_t count=0;
+	//cout << "total allocations via new = " << m_countAlloc << endl;
+	deleteTrieNodeRecursive(m_root, count);
+	//cout << "empty status = " << isEmpty() << endl;
+	//cout << "deleted in total = " << count << " number of nodes" << endl; 		
 }

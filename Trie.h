@@ -21,6 +21,7 @@ private:
 
 // Root node of the Trie Data Structure.
 	TrieNode* m_root;
+	size_t m_countAlloc=0;
 
 public:
 	Trie();
@@ -30,6 +31,9 @@ public:
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
 	bool recursiveDelete(TrieNode*, const std::string&, size_t& , const size_t& = 0);
+	bool isEmpty();
+	void deleteTrieNodeRecursive(TrieNode*, size_t&);
+	~Trie();
 };
 
 #endif

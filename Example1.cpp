@@ -31,14 +31,20 @@ int main(int argc, char* argv[])
 			cout << "word = " << word << " is an invalid Word as per Trie." << endl;
 	}
 
-	const string testWord = "anand";
-	bool isWordStatus = sampleTrie.isWord(testWord);
-	cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
-	pair<bool, size_t> deleteStatus = sampleTrie.deleteWord(testWord);
-	cout << "The deletionStatus = " << deleteStatus.first << endl;
-	if(deleteStatus.first)
-		cout << "The number of TrieNodes deleted were = " << deleteStatus.second << endl;
-	isWordStatus = sampleTrie.isWord(testWord);
-	cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
+	vector<string> testWords = { "anand", "AbraCaDabra" };
+	for(const auto& testWord : testWords)
+	{
+		bool isWordStatus = sampleTrie.isWord(testWord);
+		cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
+		pair<bool, size_t> deleteStatus = sampleTrie.deleteWord(testWord);
+		cout << "The deletionStatus = " << deleteStatus.first << endl;
+		if(deleteStatus.first)
+			cout << "The number of TrieNodes deleted were = " << deleteStatus.second << endl;
+		else
+			cout << "Nothing was delete as indicated by " << deleteStatus.second << endl;
+		isWordStatus = sampleTrie.isWord(testWord);
+		cout << "The isWord status for " << testWord << " = " << isWordStatus << endl;
+	}
+
 	return (0);
 }
