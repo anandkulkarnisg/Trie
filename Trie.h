@@ -29,12 +29,14 @@ public:
 	Trie();
 	Trie(const Trie&)=delete;
 	Trie& operator=(const Trie&)=delete;
+	size_t m_counter=0;
 
 	void insertWord(const std::string&);
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
 	bool recursiveDelete(std::shared_ptr<TrieNode>, const std::string&, size_t& , const size_t& = 0);
 	bool isEmpty();
+	long getTrieSize();
 	~Trie();
 };
 

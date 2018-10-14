@@ -19,16 +19,17 @@ Trie::Trie() : m_root(new TrieNode())
 
 void Trie::insertWord(const std::string& word) 
 {
-	if (word.size() == 0)
+	if (word.empty())
 		return;
 
 	shared_ptr<TrieNode> currNode = m_root;
 	shared_ptr<TrieNode> newNode;
 	for (unsigned int i = 0; i < word.length(); ++i) 
 	{
-		if (currNode->m_children.size() == 0) 
+		if (currNode->m_children.empty()) 
 		{
 			newNode = shared_ptr<TrieNode>(new TrieNode());
+			++m_counter;
 			currNode->m_children[word[i]] = newNode;
 		} 
 		else 
@@ -37,6 +38,7 @@ void Trie::insertWord(const std::string& word)
 			if (iter == currNode->m_children.end()) 
 			{
 				newNode = shared_ptr<TrieNode>(new TrieNode());
+				++m_counter;
 				currNode->m_children[word[i]] = newNode;
 			} 
 			else
@@ -49,7 +51,7 @@ void Trie::insertWord(const std::string& word)
 
 bool Trie::isWord(const std::string& word) 
 {
-	if (word.size() == 0)
+	if (word.empty())
 		return (false);
 
 	shared_ptr<TrieNode> currNode = m_root;
@@ -82,7 +84,7 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 
 		current->m_isComplete = false;
 		++modifyCounter;
-		return (current->m_children.size() == 0);
+		return (current->m_children.empty());
 	}
 
 	char ch = word[index];
@@ -94,16 +96,23 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 	if (shouldDeleteCurrentNode) 
 	{
 		current->m_children.erase(iter);
+		--m_counter;
 		++modifyCounter;
 		//return true if no mappings are left in the map.
-		return (current->m_children.size() == 0);
+		return (current->m_children.empty());
 	}
 	return (false);
 }
 
 bool Trie::isEmpty()
 {
-	return(m_root->m_children.size()==0);
+	return(m_root->m_children.empty());
+}
+
+long Trie::getTrieSize()
+{
+	//cout << sizeof(char) << " , " << sizeof(TrieNode) << "," << sizeof(shared_ptr<TrieNode>) << '\n';
+	return(m_counter*sizeof(TrieNode));	
 }
 
 Trie::~Trie()
