@@ -22,6 +22,7 @@ void Trie::insertWord(const std::string& word)
 	if (word.empty())
 		return;
 
+	unique_lock<shared_mutex> exclusiveLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
 	shared_ptr<TrieNode> newNode;
 	for (unsigned int i = 0; i < word.length(); ++i) 
@@ -54,6 +55,7 @@ bool Trie::isWord(const std::string& word)
 	if (word.empty())
 		return (false);
 
+	shared_lock<shared_mutex> readLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
 	for (unsigned int i = 0; i < word.size(); ++i) 
 	{
@@ -69,7 +71,10 @@ bool Trie::isWord(const std::string& word)
 pair<bool, size_t> Trie::deleteWord(const std::string& word) 
 {
 	size_t modifyCounter=0;
-	recursiveDelete(m_root, word, modifyCounter);
+	{
+		unique_lock<shared_mutex> exclusiveLock(m_mutex);
+		recursiveDelete(m_root, word, modifyCounter);
+	}
 	if(modifyCounter>0)
 		return(make_pair(true, modifyCounter));
 	return(make_pair(false, modifyCounter));
@@ -77,6 +82,7 @@ pair<bool, size_t> Trie::deleteWord(const std::string& word)
 
 bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word, size_t& modifyCounter, const size_t& index)
 {
+	// Do not take any locks inside this method. This method is called from deleteWord which is already protected via write Lock!
 	if (index == word.length()) 
 	{
 		if (!current->m_isComplete)
@@ -106,12 +112,13 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 
 bool Trie::isEmpty()
 {
+	shared_lock<shared_mutex> readLock(m_mutex);
 	return(m_root->m_children.empty());
 }
 
 long Trie::getTrieSize()
 {
-	//cout << sizeof(char) << " , " << sizeof(TrieNode) << "," << sizeof(shared_ptr<TrieNode>) << '\n';
+	shared_lock<shared_mutex> readLock(m_mutex);
 	return(m_counter*sizeof(TrieNode));	
 }
 

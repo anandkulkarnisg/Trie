@@ -3,6 +3,8 @@
 #include<map>
 #include<utility>
 #include<memory>
+#include<shared_mutex>
+#include<mutex>
 
 #ifndef Trie_H
 #define Trie_H
@@ -24,6 +26,7 @@ private:
 
 	// Root node of the Trie Data Structure.
 	std::shared_ptr<TrieNode> m_root;
+	std::shared_mutex m_mutex;
 
 public:
 	Trie();
