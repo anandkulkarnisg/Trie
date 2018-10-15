@@ -124,4 +124,5 @@ long Trie::getTrieSize()
 
 Trie::~Trie()
 {
+	// We dont need to release anything here since shared_ptr will destroy the nodes that are allocated on heap!
 }

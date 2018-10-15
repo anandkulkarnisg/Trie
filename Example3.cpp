@@ -41,5 +41,7 @@ int main(int argc, char* argv[])
 	for(const auto& word : wordList)
 		cout << "The validation status of word = " << word << " is = " << sampleTrie.isWord(word) << endl;
 
+	cout << "The Trie size = " << sampleTrie.getTrieSize() << " bytes." << endl;
+
 	return(0);
 }
