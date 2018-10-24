@@ -40,6 +40,7 @@ public:
 	void insertWord(const std::string&);
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
+	bool isValidPrefix(const std::string&, std::shared_ptr<TrieNode>&);
 	void getWordsByPrefix(const std::string&, std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();

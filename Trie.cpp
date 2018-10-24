@@ -128,30 +128,16 @@ void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
 	// if none found the vector will be empty.
 
 	shared_lock<shared_mutex> readLock(m_mutex);
-	string wordItem;
-	std::shared_ptr<TrieNode> current = m_root;
 
-	for(unsigned int i=0; i<prefix.length(); ++i)
-	{
-		const auto& iter = current->m_children.find(prefix[i]);
-		if(iter != current->m_children.end())
-		{
-			wordItem+=prefix[i];
-			current = iter->second;
-			if(current->m_isComplete)
-				wordList.push_back(wordItem);
-		}
-		else
-		{
-			return;
-		}
-	}
+	// Check if the prefix is valid only then proceed.
+	shared_ptr<TrieNode> prefixNode;
+	bool prefixStatus = isValidPrefix(prefix, prefixNode);
 
-	if(wordItem!=prefix)
+	if(!prefixStatus)
 		return;
 
 	// Now we have prefix which is valid then all we need to is recursively search all words from this prefix onwards.
-	recursiveWordSearch(current, prefix, wordList);
+	recursiveWordSearch(prefixNode, prefix, wordList);
 }
 
 void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& passedWord, vector<string>& wordList)
@@ -164,6 +150,31 @@ void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& pa
 
 	for(const auto& iter : node->m_children)
 		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
+}
+
+bool Trie::isValidPrefix(const string& prefix, shared_ptr<TrieNode>& nodeRef)
+{
+	shared_lock<shared_mutex> readLock(m_mutex);
+	string wordItem;
+	std::shared_ptr<TrieNode> current = m_root;
+
+	for(unsigned int i=0; i<prefix.length(); ++i)
+	{
+		const auto& iter = current->m_children.find(prefix[i]);
+		if(iter != current->m_children.end())
+		{
+			wordItem+=prefix[i];
+			current = iter->second;
+		}
+		else
+			return(false);
+	}
+
+	if(wordItem!=prefix)
+		return(false);
+
+	nodeRef=current;
+	return(true);
 }
 
 Trie::~Trie()
