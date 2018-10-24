@@ -8,35 +8,42 @@
 using namespace std;
 
 // Source file words.txt taken from https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt [ Had to run dos2unix coversion ].
+// https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt
 
 int main(int argc, char* argv[])
 {
-	Trie sampleTrie;
-	ifstream filestream("words.txt");
-	string text;
 
-	auto startPoint=chrono::high_resolution_clock::now();
+	vector<string> fileList = { "words.txt", "millionwords.txt" };
+	for(const auto& fileName : fileList)
+	{
+		Trie sampleTrie;
+		ifstream filestream(fileName);
+		string text;
 
-    while(!filestream.eof())
-    {
-      getline(filestream,text);
-      sampleTrie.insertWord(text);
-    }
+		auto startPoint=chrono::high_resolution_clock::now();
 
-    auto endPoint=chrono::high_resolution_clock::now();
-    auto milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
-    cout << "Total Time Taken to insert " << sampleTrie.getTrieWordCount() << " is = " << milliSecDuration << " MilliSeconds." << endl;
+		while(!filestream.eof())
+		{
+			getline(filestream,text);
+			sampleTrie.insertWord(text);
+		}
 
-    vector<string> allTrieWords;
-    size_t size = sampleTrie.getTrieWordCount();
-    allTrieWords.reserve(size);
+		auto endPoint=chrono::high_resolution_clock::now();
+		auto milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
+		cout << "Total Time Taken to insert " << sampleTrie.getTrieWordCount() << " is = " << milliSecDuration << " MilliSeconds." << endl;
 
-    startPoint=chrono::high_resolution_clock::now();
-    sampleTrie.getAllTrieWords(allTrieWords);
-    endPoint=chrono::high_resolution_clock::now();
-    milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
-    cout << "Total Time Taken to fetch all " << sampleTrie.getTrieWordCount() << " words is = " << milliSecDuration << " MilliSeconds." << endl;
+		vector<string> allTrieWords;
+		size_t size = sampleTrie.getTrieWordCount();
+		allTrieWords.reserve(size);
 
-    filestream.close();
-    return(0);
+		startPoint=chrono::high_resolution_clock::now();
+		sampleTrie.getAllTrieWords(allTrieWords);
+		endPoint=chrono::high_resolution_clock::now();
+		milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
+		cout << "Total Time Taken to fetch all " << sampleTrie.getTrieWordCount() << " words is = " << milliSecDuration << " MilliSeconds." << endl;
+		cout << "Total size of Trie in memory = " << sampleTrie.getTrieSize() << " bytes." << endl;
+
+		filestream.close();
+	}
+	return(0);
 }
