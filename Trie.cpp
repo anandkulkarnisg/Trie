@@ -122,37 +122,7 @@ long Trie::getTrieSize()
 	return(m_counter*sizeof(TrieNode));	
 }
 
-void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
-{
-	// This method searches for all valid strings and returns a vector containing those words in the Trie which are having supplied prefix.
-	// if none found the vector will be empty.
-
-	shared_lock<shared_mutex> readLock(m_mutex);
-
-	// Check if the prefix is valid only then proceed.
-	shared_ptr<TrieNode> prefixNode;
-	bool prefixStatus = isValidPrefix(prefix, prefixNode);
-
-	if(!prefixStatus)
-		return;
-
-	// Now we have prefix which is valid then all we need to is recursively search all words from this prefix onwards.
-	recursiveWordSearch(prefixNode, prefix, wordList);
-}
-
-void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& passedWord, vector<string>& wordList)
-{
-	if(node->m_isComplete)
-		wordList.push_back(passedWord);
-
-	if(node->m_children.size()==0)
-		return;
-
-	for(const auto& iter : node->m_children)
-		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
-}
-
-bool Trie::isValidPrefix(const string& prefix, shared_ptr<TrieNode>& nodeRef)
+bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nodeRef)
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
 	string wordItem;
@@ -175,6 +145,43 @@ bool Trie::isValidPrefix(const string& prefix, shared_ptr<TrieNode>& nodeRef)
 
 	nodeRef=current;
 	return(true);
+}
+
+bool Trie::isValidPrefix(const string& prefix)
+{
+	shared_ptr<TrieNode> nodeRef;
+	bool returnStatus = isValidPrefixInternal(prefix, nodeRef);
+	return(returnStatus);
+}
+
+void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
+{
+	// This method searches for all valid strings and returns a vector containing those words in the Trie which are having supplied prefix.
+	// if none found the vector will be empty.
+
+	shared_lock<shared_mutex> readLock(m_mutex);
+
+	// Check if the prefix is valid only then proceed.
+	shared_ptr<TrieNode> prefixNode;
+	bool prefixStatus = isValidPrefixInternal(prefix, prefixNode);
+
+	if(!prefixStatus)
+		return;
+
+	// Now we have prefix which is valid then all we need to is recursively search all words from this prefix onwards.
+	recursiveWordSearch(prefixNode, prefix, wordList);
+}
+
+void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& passedWord, vector<string>& wordList)
+{
+	if(node->m_isComplete)
+		wordList.push_back(passedWord);
+
+	if(node->m_children.size()==0)
+		return;
+
+	for(const auto& iter : node->m_children)
+		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
 }
 
 Trie::~Trie()

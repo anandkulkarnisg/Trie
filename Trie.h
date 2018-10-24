@@ -31,6 +31,7 @@ private:
 	size_t m_counter=0;
 	bool recursiveDelete(std::shared_ptr<TrieNode>, const std::string&, size_t& , const size_t& = 0);
 	void recursiveWordSearch(const std::shared_ptr<TrieNode>, const std::string&, std::vector<std::string>&);
+	bool isValidPrefixInternal(const std::string&, std::shared_ptr<TrieNode>&);
 
 public:
 	Trie();
@@ -40,7 +41,7 @@ public:
 	void insertWord(const std::string&);
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
-	bool isValidPrefix(const std::string&, std::shared_ptr<TrieNode>&);
+	bool isValidPrefix(const std::string&);
 	void getWordsByPrefix(const std::string&, std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();

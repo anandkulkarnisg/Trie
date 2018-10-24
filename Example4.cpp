@@ -39,5 +39,10 @@ int main(int argc, char* argv[])
 	if(sampleWordList.empty())
 		cout << "No such words starting with prefix = " << prefix << " found in the Trie." << endl;
 
+	prefix = "abk";
+	if(sampleTrie.isValidPrefix(prefix))
+		cout << "The prefix = " << prefix << " is a valid one." << endl;
+	else
+		cout << "The prefix = " << prefix << " is not a valid." << endl;
 	return(0);
 }
