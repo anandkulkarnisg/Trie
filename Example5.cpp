@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
 		auto endPoint=chrono::high_resolution_clock::now();
 		auto milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
-		cout << "Total Time Taken to insert " << sampleTrie.getTrieWordCount() << " is = " << milliSecDuration << " MilliSeconds." << endl;
+		cout << "Total Time Taken to insert " << sampleTrie.getTrieWordCount() << " words is = " << milliSecDuration << " MilliSeconds." << endl;
 
 		vector<string> allTrieWords;
 		size_t size = sampleTrie.getTrieWordCount();
