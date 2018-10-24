@@ -184,6 +184,30 @@ void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& pa
 		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
 }
 
+
+// This is a heavy word search algorithm and must not be used frequently. It has only a rare requirment for debugging purpose.
+void Trie::getAllTrieWords(vector<string>& wordList)
+{
+	 // We identify all the characters in the root map as prefixes and then search all words starting with them.
+	 if(m_root->m_children.size()==0)
+		 return;
+
+	 vector<string> prefixList;
+	 prefixList.reserve(m_root->m_children.size());
+	 for(const auto& iter : m_root->m_children)
+		 prefixList.emplace_back(string(1,iter.first));
+
+	 vector<string> prefixWordList;
+	 for(const auto& iter : prefixList)
+	 {
+		 prefixWordList.clear();
+		 getWordsByPrefix(iter,prefixWordList);
+		 copy(prefixWordList.begin(), prefixWordList.end(), back_inserter(wordList));
+
+	 }
+}
+
+
 Trie::~Trie()
 {
 	// We dont need to release anything here since shared_ptr will destroy the nodes that are allocated on heap!

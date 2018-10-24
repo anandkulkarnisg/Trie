@@ -43,6 +43,7 @@ public:
 	std::pair<bool, size_t> deleteWord(const std::string&);
 	bool isValidPrefix(const std::string&);
 	void getWordsByPrefix(const std::string&, std::vector<std::string>&);
+	void getAllTrieWords(std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();
 	~Trie();

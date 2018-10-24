@@ -15,6 +15,10 @@ int main(int argc, char* argv[])
 	sampleTrie.insertWord("petrol");
 	sampleTrie.insertWord("petronas");
 
+	sampleTrie.insertWord("miguel");
+	sampleTrie.insertWord("columbia");
+	sampleTrie.insertWord("germany");
+
 	vector<string> wordList = { "pet", "peter", "peterson", "petrol", "petronas", "petulant" };
 	for(const auto& iter : wordList)
 	{
@@ -44,5 +48,17 @@ int main(int argc, char* argv[])
 		cout << "The prefix = " << prefix << " is a valid one." << endl;
 	else
 		cout << "The prefix = " << prefix << " is not a valid." << endl;
+
+	vector<string> allTrieWordList;
+	allTrieWordList.reserve(100);
+
+	sampleTrie.getAllTrieWords(allTrieWordList);
+
+	cout << "All the Trie words are listed below" << endl;
+	for(const auto& iter : allTrieWordList)
+		cout << iter << " , ";
+	cout << '\n';
+
+
 	return(0);
 }
