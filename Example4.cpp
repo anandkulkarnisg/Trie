@@ -32,5 +32,12 @@ int main(int argc, char* argv[])
 	cout << "The valid words in the Trie for prefix = " << prefix << " are below." << endl;
 	for(const auto& iter : prefixWordList)
 		cout << iter << endl;
+
+	prefix = "ps";
+	vector<string> sampleWordList;
+	sampleTrie.getWordsByPrefix(prefix, sampleWordList);
+	if(sampleWordList.empty())
+		cout << "No such words starting with prefix = " << prefix << " found in the Trie." << endl;
+
 	return(0);
 }
