@@ -28,7 +28,10 @@ private:
 	// Root node of the Trie Data Structure.
 	std::shared_ptr<TrieNode> m_root;
 	std::shared_mutex m_mutex;
+
 	size_t m_counter=0;
+	size_t m_wordCount=0;
+
 	bool recursiveDelete(std::shared_ptr<TrieNode>, const std::string&, size_t& , const size_t& = 0);
 	void recursiveWordSearch(const std::shared_ptr<TrieNode>, const std::string&, std::vector<std::string>&);
 	bool isValidPrefixInternal(const std::string&, std::shared_ptr<TrieNode>&);
@@ -46,6 +49,7 @@ public:
 	void getAllTrieWords(std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();
+	long getTrieWordCount();
 	~Trie();
 };
 

@@ -50,7 +50,8 @@ int main(int argc, char* argv[])
 		cout << "The prefix = " << prefix << " is not a valid." << endl;
 
 	vector<string> allTrieWordList;
-	allTrieWordList.reserve(100);
+	size_t size = sampleTrie.getTrieWordCount();
+	allTrieWordList.reserve(size);
 
 	sampleTrie.getAllTrieWords(allTrieWordList);
 

@@ -48,6 +48,7 @@ void Trie::insertWord(const std::string& word)
 		currNode = newNode;
 	}
 	newNode->m_isComplete = true;
+	++m_wordCount;
 }
 
 bool Trie::isWord(const std::string& word) 
@@ -189,6 +190,8 @@ void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& pa
 void Trie::getAllTrieWords(vector<string>& wordList)
 {
 	 // We identify all the characters in the root map as prefixes and then search all words starting with them.
+	shared_lock<shared_mutex> readLock(m_mutex);
+
 	 if(m_root->m_children.size()==0)
 		 return;
 
@@ -198,6 +201,8 @@ void Trie::getAllTrieWords(vector<string>& wordList)
 		 prefixList.emplace_back(string(1,iter.first));
 
 	 vector<string> prefixWordList;
+	 prefixWordList.reserve(m_wordCount);
+
 	 for(const auto& iter : prefixList)
 	 {
 		 prefixWordList.clear();
@@ -205,6 +210,13 @@ void Trie::getAllTrieWords(vector<string>& wordList)
 		 copy(prefixWordList.begin(), prefixWordList.end(), back_inserter(wordList));
 
 	 }
+}
+
+// Return the number of words inserted in the Trie so far.
+long Trie::getTrieWordCount()
+{
+	shared_lock<shared_mutex> readLock(m_mutex);
+	return(m_wordCount);
 }
 
 
