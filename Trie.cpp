@@ -122,6 +122,50 @@ long Trie::getTrieSize()
 	return(m_counter*sizeof(TrieNode));	
 }
 
+void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
+{
+	// This method searches for all valid strings and returns a vector containing those words in the Trie which are having supplied prefix.
+	// if none found the vector will be empty.
+
+	shared_lock<shared_mutex> readLock(m_mutex);
+	string wordItem;
+	std::shared_ptr<TrieNode> current = m_root;
+
+	for(unsigned int i=0; i<prefix.length(); ++i)
+	{
+		const auto& iter = current->m_children.find(prefix[i]);
+		if(iter != current->m_children.end())
+		{
+			wordItem+=prefix[i];
+			current = iter->second;
+			if(current->m_isComplete)
+				wordList.push_back(wordItem);
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	if(wordItem!=prefix)
+		return;
+
+	// Now we have prefix which is valid then all we need to is recursively search all words from this prefix onwards.
+	recursiveWordSearch(current, prefix, wordList);
+}
+
+void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& passedWord, vector<string>& wordList)
+{
+	if(node->m_isComplete)
+		wordList.push_back(passedWord);
+
+	if(node->m_children.size()==0)
+		return;
+
+	for(const auto& iter : node->m_children)
+		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
+}
+
 Trie::~Trie()
 {
 	// We dont need to release anything here since shared_ptr will destroy the nodes that are allocated on heap!

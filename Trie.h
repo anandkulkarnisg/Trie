@@ -5,6 +5,7 @@
 #include<memory>
 #include<shared_mutex>
 #include<mutex>
+#include<vector>
 
 #ifndef Trie_H
 #define Trie_H
@@ -27,17 +28,19 @@ private:
 	// Root node of the Trie Data Structure.
 	std::shared_ptr<TrieNode> m_root;
 	std::shared_mutex m_mutex;
+	size_t m_counter=0;
+	bool recursiveDelete(std::shared_ptr<TrieNode>, const std::string&, size_t& , const size_t& = 0);
+	void recursiveWordSearch(const std::shared_ptr<TrieNode>, const std::string&, std::vector<std::string>&);
 
 public:
 	Trie();
 	Trie(const Trie&)=delete;
 	Trie& operator=(const Trie&)=delete;
-	size_t m_counter=0;
 
 	void insertWord(const std::string&);
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
-	bool recursiveDelete(std::shared_ptr<TrieNode>, const std::string&, size_t& , const size_t& = 0);
+	void getWordsByPrefix(const std::string&, std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();
 	~Trie();
