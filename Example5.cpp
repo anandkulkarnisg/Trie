@@ -12,8 +12,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-
-	vector<string> fileList = { "words.txt", "millionwords.txt" };
+	vector<string> fileList = { "words.txt", "millionwords.txt", "10mil.txt", "40mil.txt" };
 	for(const auto& fileName : fileList)
 	{
 		Trie sampleTrie;
@@ -42,6 +41,7 @@ int main(int argc, char* argv[])
 		milliSecDuration = chrono::duration_cast<chrono::milliseconds>(endPoint - startPoint).count();
 		cout << "Total Time Taken to fetch all " << sampleTrie.getTrieWordCount() << " words is = " << milliSecDuration << " MilliSeconds." << endl;
 		cout << "Total size of Trie in memory = " << sampleTrie.getTrieSize() << " bytes." << endl;
+		cout << '\n';
 
 		filestream.close();
 	}
