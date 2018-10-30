@@ -141,7 +141,7 @@ long Trie::getTrieSize()
 	return(m_counter*sizeof(TrieNode));	
 }
 
-bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nodeRef)
+bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nodeRef, shared_ptr<TrieNode>& prevRef)
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
 	string wordItem;
@@ -153,6 +153,7 @@ bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nod
 		if(iter != current->m_children.end())
 		{
 			wordItem+=prefix[i];
+			prevRef = current;
 			current = iter->second;
 		}
 		else
@@ -169,7 +170,8 @@ bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nod
 bool Trie::isValidPrefix(const string& prefix)
 {
 	shared_ptr<TrieNode> nodeRef;
-	bool returnStatus = isValidPrefixInternal(prefix, nodeRef);
+	shared_ptr<TrieNode> prevRef;
+	bool returnStatus = isValidPrefixInternal(prefix, nodeRef, prevRef);
 	return(returnStatus);
 }
 
@@ -182,7 +184,8 @@ void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
 
 	// Check if the prefix is valid only then proceed.
 	shared_ptr<TrieNode> prefixNode;
-	bool prefixStatus = isValidPrefixInternal(prefix, prefixNode);
+	shared_ptr<TrieNode> prevNode;
+	bool prefixStatus = isValidPrefixInternal(prefix, prefixNode, prevNode);
 
 	if(!prefixStatus)
 		return;
@@ -234,14 +237,10 @@ long Trie::getWordCountByPrefix(const std::string& prefix)
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
 	shared_ptr<TrieNode> nodeRef;
-	bool returnStatus = isValidPrefixInternal(prefix, nodeRef);
+	shared_ptr<TrieNode> prevRef;
+	bool returnStatus = isValidPrefixInternal(prefix, nodeRef, prevRef);
 	if(returnStatus)
-	{
-		nodeRef = m_root;
-		for(unsigned int i=0; i<prefix.length()-1; ++i)
-			 nodeRef = nodeRef->m_children.find(prefix[i])->second;
-		return(nodeRef->m_prefixCount);
-	}
+		return(prevRef->m_prefixCount);
 	else
 		return(0);
 }
