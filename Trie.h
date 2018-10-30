@@ -21,7 +21,7 @@ private:
 		std::map<char, std::shared_ptr<TrieNode>> m_children;
 		bool m_isComplete;
 		long m_prefixCount;		// This stores sum of all words at this point as a prefix. Helps in quicker answering of the question how many words are there with a given prefix much faster!
-		TrieNode() : m_isComplete(false) , m_prefixCount(0)
+		TrieNode() : m_isComplete(false) , m_prefixCount(1)
 		{
 		}
 	};
@@ -47,7 +47,7 @@ public:
 	std::pair<bool, size_t> deleteWord(const std::string&);
 	bool isValidPrefix(const std::string&);
 	void getWordsByPrefix(const std::string&, std::vector<std::string>&);
-	long getWordCountByPrefix(const std::string&);
+	long getWordCountByPrefix(const std::string& prefix);
 	void getAllTrieWords(std::vector<std::string>&);
 	bool isEmpty();
 	long getTrieSize();

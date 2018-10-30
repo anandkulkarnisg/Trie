@@ -13,40 +13,40 @@
 
 using namespace std;
 
-Trie::Trie() : m_root(new TrieNode()) 
+Trie::Trie() :
+		m_root(new TrieNode())
 {
 }
 
-void Trie::insertWord(const std::string& word) 
+void Trie::insertWord(const std::string& word)
 {
-	if (word.empty())
+	if(word.empty())
 		return;
 
 	unique_lock<shared_mutex> exclusiveLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
-	currNode->m_prefixCount++;
 	shared_ptr<TrieNode> newNode;
 
-	for (unsigned int i = 0; i < word.length(); ++i) 
+	for (unsigned int i = 0; i < word.length(); ++i)
 	{
-		if (currNode->m_children.empty()) 
+		if(currNode->m_children.empty())
 		{
 			newNode = shared_ptr<TrieNode>(new TrieNode());
-			if(i<word.length()-1)
+			if(i < word.length() - 1)
 				newNode->m_prefixCount++;
 			++m_counter;
 			currNode->m_children[word[i]] = newNode;
-		} 
-		else 
+		}
+		else
 		{
 			const auto& iter = currNode->m_children.find(word[i]);
-			if (iter == currNode->m_children.end()) 
+			if(iter == currNode->m_children.end())
 			{
 				newNode = shared_ptr<TrieNode>(new TrieNode());
 				newNode->m_prefixCount++;
 				++m_counter;
 				currNode->m_children[word[i]] = newNode;
-			} 
+			}
 			else
 			{
 				newNode = iter->second;
@@ -60,17 +60,17 @@ void Trie::insertWord(const std::string& word)
 	++m_wordCount;
 }
 
-bool Trie::isWord(const std::string& word) 
+bool Trie::isWord(const std::string& word)
 {
-	if (word.empty())
+	if(word.empty())
 		return (false);
 
 	shared_lock<shared_mutex> readLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
-	for (unsigned int i = 0; i < word.size(); ++i) 
+	for (unsigned int i = 0; i < word.size(); ++i)
 	{
 		const auto& iter = currNode->m_children.find(word[i]);
-		if (iter == currNode->m_children.end())
+		if(iter == currNode->m_children.end())
 			return (false);
 		else
 			currNode = iter->second;
@@ -78,26 +78,26 @@ bool Trie::isWord(const std::string& word)
 	return (currNode->m_isComplete);
 }
 
-pair<bool, size_t> Trie::deleteWord(const std::string& word) 
+pair<bool, size_t> Trie::deleteWord(const std::string& word)
 {
-	size_t modifyCounter=0;
+	size_t modifyCounter = 0;
 	{
 		unique_lock<shared_mutex> exclusiveLock(m_mutex);
 		recursiveDelete(m_root, word, modifyCounter);
 	}
 
-	bool returnStatus=false;
-	if(modifyCounter>0)
-		returnStatus=true;
-	return(make_pair(returnStatus, modifyCounter));
+	bool returnStatus = false;
+	if(modifyCounter > 0)
+		returnStatus = true;
+	return (make_pair(returnStatus, modifyCounter));
 }
 
 bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word, size_t& modifyCounter, const size_t& index)
 {
 	// Do not take any locks inside this method. This method is called from deleteWord which is already protected via write Lock!
-	if (index == word.length()) 
+	if(index == word.length())
 	{
-		if (!current->m_isComplete)
+		if(!current->m_isComplete)
 			return (false);
 
 		current->m_isComplete = false;
@@ -107,12 +107,12 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 
 	char ch = word[index];
 	const auto& iter = current->m_children.find(ch);
-	if (iter == current->m_children.end())
+	if(iter == current->m_children.end())
 		return (false);
 
-	size_t beforeModifyCounter=modifyCounter;
+	size_t beforeModifyCounter = modifyCounter;
 	bool shouldDeleteCurrentNode = recursiveDelete(iter->second, word, modifyCounter, index + 1);
-	if (shouldDeleteCurrentNode) 
+	if(shouldDeleteCurrentNode)
 	{
 		current->m_children.erase(iter);
 		current->m_prefixCount--;
@@ -123,7 +123,7 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 	}
 	else
 	{
-		if(beforeModifyCounter!=modifyCounter)
+		if(beforeModifyCounter != modifyCounter)
 			current->m_prefixCount--;
 	}
 	return (false);
@@ -132,13 +132,13 @@ bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word
 bool Trie::isEmpty()
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
-	return(m_root->m_children.empty());
+	return (m_root->m_children.empty());
 }
 
 long Trie::getTrieSize()
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
-	return(m_counter*sizeof(TrieNode));	
+	return (m_counter * sizeof(TrieNode));
 }
 
 bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nodeRef, shared_ptr<TrieNode>& prevRef)
@@ -147,24 +147,24 @@ bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nod
 	string wordItem;
 	std::shared_ptr<TrieNode> current = m_root;
 
-	for(unsigned int i=0; i<prefix.length(); ++i)
+	for (unsigned int i = 0; i < prefix.length(); ++i)
 	{
 		const auto& iter = current->m_children.find(prefix[i]);
 		if(iter != current->m_children.end())
 		{
-			wordItem+=prefix[i];
+			wordItem += prefix[i];
 			prevRef = current;
 			current = iter->second;
 		}
 		else
-			return(false);
+			return (false);
 	}
 
-	if(wordItem!=prefix)
-		return(false);
+	if(wordItem != prefix)
+		return (false);
 
-	nodeRef=current;
-	return(true);
+	nodeRef = current;
+	return (true);
 }
 
 bool Trie::isValidPrefix(const string& prefix)
@@ -172,7 +172,7 @@ bool Trie::isValidPrefix(const string& prefix)
 	shared_ptr<TrieNode> nodeRef;
 	shared_ptr<TrieNode> prevRef;
 	bool returnStatus = isValidPrefixInternal(prefix, nodeRef, prevRef);
-	return(returnStatus);
+	return (returnStatus);
 }
 
 void Trie::getWordsByPrefix(const string& prefix, vector<string>& wordList)
@@ -199,69 +199,77 @@ void Trie::recursiveWordSearch(const shared_ptr<TrieNode> node, const string& pa
 	if(node->m_isComplete)
 		wordList.push_back(passedWord);
 
-	if(node->m_children.size()==0)
+	if(node->m_children.size() == 0)
 		return;
 
-	for(const auto& iter : node->m_children)
-		recursiveWordSearch(iter.second, passedWord+iter.first, wordList);
+	for (const auto& iter : node->m_children)
+		recursiveWordSearch(iter.second, passedWord + iter.first, wordList);
 }
-
 
 // This is a heavy word search algorithm and must not be used frequently. It has only a rare requirment for debugging purpose.
 void Trie::getAllTrieWords(vector<string>& wordList)
 {
-	 // We identify all the characters in the root map as prefixes and then search all words starting with them.
+	// We identify all the characters in the root map as prefixes and then search all words starting with them.
 	shared_lock<shared_mutex> readLock(m_mutex);
 
-	 if(m_root->m_children.size()==0)
-		 return;
+	if(m_root->m_children.size() == 0)
+		return;
 
-	 vector<string> prefixList;
-	 prefixList.reserve(m_root->m_children.size());
-	 for(const auto& iter : m_root->m_children)
-		 prefixList.emplace_back(string(1,iter.first));
+	vector<string> prefixList;
+	prefixList.reserve(m_root->m_children.size());
+	for (const auto& iter : m_root->m_children)
+		prefixList.emplace_back(string(1, iter.first));
 
-	 vector<string> prefixWordList;
-	 prefixWordList.reserve(m_wordCount);
+	vector<string> prefixWordList;
+	prefixWordList.reserve(m_wordCount);
 
-	 for(const auto& iter : prefixList)
-	 {
-		 prefixWordList.clear();
-		 getWordsByPrefix(iter,prefixWordList);
-		 copy(prefixWordList.begin(), prefixWordList.end(), back_inserter(wordList));
+	for (const auto& iter : prefixList)
+	{
+		prefixWordList.clear();
+		getWordsByPrefix(iter, prefixWordList);
+		copy(prefixWordList.begin(), prefixWordList.end(), back_inserter(wordList));
 
-	 }
-}
-
-long Trie::getWordCountByPrefix(const std::string& prefix)
-{
-	shared_lock<shared_mutex> readLock(m_mutex);
-	shared_ptr<TrieNode> nodeRef;
-	shared_ptr<TrieNode> prevRef;
-	bool returnStatus = isValidPrefixInternal(prefix, nodeRef, prevRef);
-	if(returnStatus)
-		return(prevRef->m_prefixCount);
-	else
-		return(0);
+	}
 }
 
 // Return the number of words inserted in the Trie so far.
 long Trie::getTrieWordCount()
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
-	return(m_wordCount);
+	return (m_wordCount);
 }
 
 // debug func used for ironing out unit test cases and bugs with prefixCount.
 void Trie::debugFunc()
 {
 	shared_ptr<TrieNode> current = m_root;
-	while(!current->m_children.empty())
+	while (!current->m_children.empty())
 	{
 		cout << "character is   = " << current->m_children.begin()->first << endl;
 		cout << "prefixCount is = " << current->m_prefixCount << endl;
 		current = current->m_children.begin()->second;
 	}
+}
+
+long Trie::getWordCountByPrefix(const string& prefix)
+{
+	if(prefix.empty())
+		return (0);
+
+	shared_ptr<TrieNode> current = m_root;
+	for (unsigned int i = 0; i < prefix.size(); ++i)
+	{
+		const auto& iter = current->m_children.find(prefix[i]);
+		if(iter == current->m_children.end())
+			return (0);
+		else
+			current = iter->second;
+	}
+	bool isWord = current->m_isComplete;
+	if(!isWord)
+		return (current->m_prefixCount-1);
+	else
+		return (current->m_prefixCount);
 }
 
 Trie::~Trie()
