@@ -52,6 +52,7 @@ public:
 	bool isEmpty();
 	long getTrieSize();
 	long getTrieWordCount();
+	void debugFunc();
 	~Trie();
 };
 

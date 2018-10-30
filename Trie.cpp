@@ -24,13 +24,16 @@ void Trie::insertWord(const std::string& word)
 
 	unique_lock<shared_mutex> exclusiveLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
+	currNode->m_prefixCount++;
 	shared_ptr<TrieNode> newNode;
+
 	for (unsigned int i = 0; i < word.length(); ++i) 
 	{
 		if (currNode->m_children.empty()) 
 		{
 			newNode = shared_ptr<TrieNode>(new TrieNode());
-			newNode->m_prefixCount++;
+			if(i<word.length()-1)
+				newNode->m_prefixCount++;
 			++m_counter;
 			currNode->m_children[word[i]] = newNode;
 		} 
@@ -233,7 +236,12 @@ long Trie::getWordCountByPrefix(const std::string& prefix)
 	shared_ptr<TrieNode> nodeRef;
 	bool returnStatus = isValidPrefixInternal(prefix, nodeRef);
 	if(returnStatus)
+	{
+		nodeRef = m_root;
+		for(unsigned int i=0; i<prefix.length()-1; ++i)
+			 nodeRef = nodeRef->m_children.find(prefix[i])->second;
 		return(nodeRef->m_prefixCount);
+	}
 	else
 		return(0);
 }
@@ -245,6 +253,17 @@ long Trie::getTrieWordCount()
 	return(m_wordCount);
 }
 
+// debug func used for ironing out unit test cases and bugs with prefixCount.
+void Trie::debugFunc()
+{
+	shared_ptr<TrieNode> current = m_root;
+	while(!current->m_children.empty())
+	{
+		cout << "character is   = " << current->m_children.begin()->first << endl;
+		cout << "prefixCount is = " << current->m_prefixCount << endl;
+		current = current->m_children.begin()->second;
+	}
+}
 
 Trie::~Trie()
 {
