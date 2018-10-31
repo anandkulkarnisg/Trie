@@ -16,6 +16,7 @@ add_executable(Example8.out Example8.cpp)
 add_executable(Example9.out Example9.cpp)
 add_executable(Example10.out Example10.cpp)
 add_executable(Example11.out Example11.cpp)
+add_executable(Example12.out Example12.cpp)
 
 target_link_libraries(Example1.out Trie pthread)
 target_link_libraries(Example2.out Trie pthread)
@@ -28,4 +29,5 @@ target_link_libraries(Example8.out Trie pthread)
 target_link_libraries(Example9.out Trie pthread)
 target_link_libraries(Example10.out Trie pthread)
 target_link_libraries(Example11.out Trie pthread)
+target_link_libraries(Example12.out Trie pthread)
 

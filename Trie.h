@@ -45,7 +45,7 @@ public:
 	Trie(const Trie&)=delete;
 	Trie& operator=(const Trie&)=delete;
 
-	void insertWord(const std::string&);
+	std::pair<bool, size_t> insertWord(const std::string&);
 	bool isWord(const std::string&);
 	std::pair<bool, size_t> deleteWord(const std::string&);
 	bool isValidPrefix(const std::string&);

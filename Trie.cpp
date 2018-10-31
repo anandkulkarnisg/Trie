@@ -18,14 +18,18 @@ Trie::Trie() :
 {
 }
 
-void Trie::insertWord(const std::string& word)
+pair<bool, size_t> Trie::insertWord(const std::string& word)
 {
-	if(word.empty())
-		return;
+	pair<bool, size_t> failResult = make_pair(false, 0);
+
+	// We must defend against same word insertion / duplication as this will break the prefixCount integrity.
+	if(word.empty() || isWord(word))
+		return(failResult);
 
 	unique_lock<shared_mutex> exclusiveLock(m_mutex);
 	shared_ptr<TrieNode> currNode = m_root;
 	shared_ptr<TrieNode> newNode;
+	int modifyCounter=0;
 
 	for (unsigned int i = 0; i < word.length(); ++i)
 	{
@@ -35,6 +39,7 @@ void Trie::insertWord(const std::string& word)
 			if(i < word.length() - 1)
 				newNode->m_prefixCount++;
 			++m_counter;
+			++modifyCounter;
 			currNode->m_children[word[i]] = newNode;
 		}
 		else
@@ -45,6 +50,7 @@ void Trie::insertWord(const std::string& word)
 				newNode = shared_ptr<TrieNode>(new TrieNode());
 				newNode->m_prefixCount++;
 				++m_counter;
+				++modifyCounter;
 				currNode->m_children[word[i]] = newNode;
 			}
 			else
@@ -57,7 +63,10 @@ void Trie::insertWord(const std::string& word)
 	}
 
 	newNode->m_isComplete = true;
+	++modifyCounter;
 	++m_wordCount;
+
+	return(make_pair(true, modifyCounter));
 }
 
 bool Trie::isWord(const std::string& word)
