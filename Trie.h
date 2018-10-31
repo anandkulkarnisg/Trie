@@ -55,6 +55,7 @@ public:
 	bool isEmpty();
 	long getTrieSize();
 	long getTrieWordCount();
+	void resetTrie();
 	~Trie();
 };
 

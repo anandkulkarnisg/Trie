@@ -280,6 +280,13 @@ long Trie::getWordCountByPrefix(const string& prefix)
 		return (current->m_prefixCount);
 }
 
+void Trie::resetTrie()
+{
+	unique_lock<shared_mutex> exclusiveLock(m_mutex);
+	m_root.reset(new TrieNode());
+	m_counter=m_wordCount=0;
+}
+
 Trie::~Trie()
 {
 	// We dont need to release anything here since shared_ptr will destroy the nodes that are allocated on heap!
