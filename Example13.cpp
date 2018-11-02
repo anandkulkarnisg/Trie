@@ -39,16 +39,18 @@ int main(int argc, char* argv[])
 	// Part 2 : spin off the threads which will try to insert the specific 10 items as per their id into the Trie. At end the Trie must have 100 words in it.
 	// This is to test and prove that it is threadsafe and has no loss of data.
 
-	unsigned int numTestRuns = 100;
+	const unsigned int numTestRuns = 100;
+	const unsigned int threadPoolSize = 10;
+
 	set<int> trieCounts;
 	vector<thread> testThreadPool;
-	testThreadPool.reserve(10);
+	testThreadPool.reserve(threadPoolSize);
 
 	// Part 3 : Join the worker threads and verify the results.
 	for (unsigned int i = 0; i <numTestRuns; ++i)
 	{
 		// spin off the threads.
-		for (unsigned int j = 0; j < 10; ++j)
+		for (unsigned int j = 0; j < threadPoolSize; ++j)
 			testThreadPool.emplace_back(thread(&insertIntoTrie, cref(inputWordList), j));
 
 		// Join the threads.
