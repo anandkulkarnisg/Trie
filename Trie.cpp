@@ -18,7 +18,7 @@ Trie::Trie() :
 {
 }
 
-pair<bool, size_t> Trie::insertWord(const std::string& word)
+pair<bool, size_t> Trie::insertWord(const string& word)
 {
 	pair<bool, size_t> failResult = make_pair(false, 0);
 
@@ -69,7 +69,7 @@ pair<bool, size_t> Trie::insertWord(const std::string& word)
 	return(make_pair(true, modifyCounter));
 }
 
-bool Trie::isWord(const std::string& word)
+bool Trie::isWord(const string& word)
 {
 	if(word.empty())
 		return (false);
@@ -87,7 +87,7 @@ bool Trie::isWord(const std::string& word)
 	return (currNode->m_isComplete);
 }
 
-pair<bool, size_t> Trie::deleteWord(const std::string& word)
+pair<bool, size_t> Trie::deleteWord(const string& word)
 {
 	size_t modifyCounter = 0;
 	{
@@ -101,7 +101,7 @@ pair<bool, size_t> Trie::deleteWord(const std::string& word)
 	return (make_pair(returnStatus, modifyCounter));
 }
 
-bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const std::string& word, size_t& modifyCounter, const size_t& index)
+bool Trie::recursiveDelete(shared_ptr<TrieNode> current, const string& word, size_t& modifyCounter, const size_t& index)
 {
 	// Do not take any locks inside this method. This method is called from deleteWord which is already protected via write Lock!
 	if(index == word.length())
@@ -154,7 +154,7 @@ bool Trie::isValidPrefixInternal(const string& prefix, shared_ptr<TrieNode>& nod
 {
 	shared_lock<shared_mutex> readLock(m_mutex);
 	string wordItem;
-	std::shared_ptr<TrieNode> current = m_root;
+	shared_ptr<TrieNode> current = m_root;
 
 	for (unsigned int i = 0; i < prefix.length(); ++i)
 	{
